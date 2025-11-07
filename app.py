@@ -3,10 +3,10 @@ import requests
 import json 
 app = Flask(__name__)
 
-NAVER_CLIENT_ID = "9Q6o2Qnqn3TztgCqMwEQ" 
-NAVER_CLIENT_SECRET = "YECVfxIHm6"
+NAVER_CLIENT_ID = "" 
+NAVER_CLIENT_SECRET = ""
 
-@app.route('/blog')
+@app.route('/')
 def index():
     return render_template('index.html')
 
