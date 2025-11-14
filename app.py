@@ -8,7 +8,7 @@ CORS(app)
 
 # --- 네이버 API 키 ---
 # (키를 안전하게 관리하세요)
-NAVER_CLIENT_ID = "9Q6o2Qnqn3TztgCqMwEQ" 
+NAVER_CLIENT_ID = "" 
 NAVER_CLIENT_SECRET = ""
 # --------------------
 
