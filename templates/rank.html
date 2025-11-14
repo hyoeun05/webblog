@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인기 검색어 순위</title>
+<!-- 메인 CSS 재사용 -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- 순위 표시를 위한 컨테이너 -->
+<div class="rank-container">
+    <h1>🏆 인기 검색어 순위 (Top 10)</h1>
+    
+    <!-- DB에서 전달받은 rankings 변수를 사용 -->
+    {% if error %}
+        <!-- 오류 발생 시 -->
+        <p class="error-message">{{ error }}</p>
+    {% elif rankings %}
+        <!-- 순위 리스트 (ordered list) -->
+        <ol class="rank-list">
+            <!-- 
+              Jinja2 템플릿 문법
+              item 예시: {'query': '강남역', 'count': 5}
+            -->
+            {% for item in rankings %}
+                <li>
+                    <span class="rank-query">{{ item['query'] }}</span>
+                    <span class="rank-count">{{ item['count'] }} 회</span>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <!-- 검색 기록이 없을 때 -->
+        <p class="no-data">아직 검색 기록이 없습니다.</p>
+    {% endif %}
+
+    <div class="back-link-container">
+        <a href="/" class="back-link">← 검색 페이지로 돌아가기</a>
+    </div>
+</div>
+
+
+</body>
+</html>

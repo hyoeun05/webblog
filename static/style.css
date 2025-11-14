@@ -4,17 +4,24 @@ body {
     background-color: #f5f6f7;
     margin: 0;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .search-container {
+    width: 100%;
     max-width: 600px;
-    margin: 40px auto;
+    margin: 40px auto 20px auto;
     text-align: center;
 }
 
 h1 {
     color: #333;
-    font-weight: 300;
+    font-weight: 400; /* 너무 두껍지 않게 */
+    font-size: 24px;
+    margin-bottom: 20px;
 }
 
 #search-form {
@@ -23,6 +30,7 @@ h1 {
     border: 2px solid #03C75A; /* 네이버 메인 컬러 */
     border-radius: 6px;
     overflow: hidden; /* 버튼의 둥근 모서리를 위해 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #search-input {
@@ -41,55 +49,231 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.2s;
 }
 
 #search-button:hover {
     background-color: #02b350;
 }
 
+/* ---------------------------------- */
 /* 결과 리스트 스타일 */
+/* ---------------------------------- */
 #results-container {
+    width: 100%;
     max-width: 600px;
     margin: 20px auto;
 }
 
 .result-item {
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px 20px;
-    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: box-shadow 0.2s;
+}
+
+.result-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .result-item h3 {
-    margin: 0 0 5px 0;
+    margin: 0 0 8px 0;
     font-size: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .result-item h3 a {
     text-decoration: none;
-    color: #1a0dab; /* 구글/네이버 링크 색상 */
+    color: #1a0dab; /* 링크 색상 */
 }
 
 .result-item h3 a:hover {
     text-decoration: underline;
 }
 
-/* 네이버 API가 반환하는 <b> 태그를 강조 */
+/* 네이버 API가 반환하는 <b> 태그 강조 */
 .result-item b {
     color: #03C75A;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .result-item p {
-    margin: 5px 0;
+    margin: 10px 0;
     font-size: 14px;
-    color: #555;
+    color: #444;
     line-height: 1.6;
+    /* 본문 3줄 요약 */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* ---! [수정] 경고 메시지 해결 --- */
+    -webkit-line-clamp: 3; /* 구형 브라우저용 */
+    line-clamp: 3;         /* 신형 브라우저용 표준 속성 */
+    /* ----------------------------- */
 }
 
 .result-item .meta {
-    font-size: 12px;
-    color: #888;
+    font-size: 13px;
+    color: #777;
+    margin-top: 10px;
+}
+
+.result-item .meta strong {
+    color: #333;
+    font-weight: 500;
+}
+
+/* ---------------------------------- */
+/* 로딩 스피너 스타일 */
+/* ---------------------------------- */
+.spinner-container {
+    text-align: center;
+    padding: 20px;
+}
+.spinner {
+    border: 4px solid #f3f3f3; /* 회색 트랙 */
+    border-top: 4px solid #03C75A; /* 초록색 스피너 */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ---------------------------------- */
+/* [신규] 메인 페이지 - 순위 링크 스타일 */
+/* ---------------------------------- */
+.rank-link-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.rank-link-container a {
+    text-decoration: none;
+    color: #03C75A;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.rank-link-container a:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+
+/* ---------------------------------- */
+/* [신규] 순위 페이지 (rank.html) 스타일 */
+/* ---------------------------------- */
+.rank-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px 30px 30px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.rank-container h1 {
+    text-align: center;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.rank-list {
+    list-style-type: none; /* 기본 숫자 제거 */
+    padding-left: 0;
+    margin: 0;
+    counter-reset: rank-counter; /* 순위 카운터 초기화 */
+}
+
+.rank-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 양쪽 정렬 */
+    font-size: 17px;
+    padding: 15px 10px;
+    border-bottom: 1px solid #f3f3f3;
+    counter-increment: rank-counter; /* 카운터 1씩 증가 */
+}
+
+.rank-list li:last-child {
+    border-bottom: none;
+}
+
+/* CSS로 순위 숫자 (1, 2, 3...) 생성 */
+.rank-list li::before {
+    content: counter(rank-counter); /* CSS 카운터 표시 */
+    font-weight: bold;
+    font-size: 18px;
+    color: #03C75A;
+    margin-right: 20px;
+    min-width: 20px; /* 너비 고정 */
+    text-align: right;
+}
+
+.rank-query {
+    font-weight: 500;
+    color: #333;
+    /* 긴 검색어 말줄임표 처리 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 15px;
+}
+
+.rank-count {
+    font-size: 15px;
+    font-weight: 500;
+    color: #555;
+    background-color: #f5f6f7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex-shrink: 0; /* '...회' 부분이 줄어들지 않도록 설정 */
+}
+
+/* 데이터가 없거나 오류일 때 메시지 */
+.no-data, .error-message {
+    text-align: center;
+    color: #777;
+    padding: 30px 0;
+}
+
+.error-message {
+    color: #d93025; /* 붉은색 오류 메시지 */
+}
+
+.back-link-container {
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #03C75A;
 }
