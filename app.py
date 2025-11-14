@@ -6,9 +6,8 @@ import sqlite3 #! DB 사용을 위해 import
 app = Flask(__name__)
 CORS(app) 
 
-# --- 네이버 API 키 ---
-# (키를 안전하게 관리하세요) 
-NAVER_CLIENT_ID = "9Q6o2Qnqn3TztgCqMwEQ" 
+ 
+NAVER_CLIENT_ID = "" 
 NAVER_CLIENT_SECRET = ""
 # --------------------
 
@@ -132,4 +131,8 @@ def rank():
 # ------------------------------------
 
 if __name__ == '__main__':
+
     app.run(debug=True, host='0.0.0.0')
+
+    setup_database() #! 앱 실행 전 DB 테이블 생성 확인
+    app.run(debug=True, port=5000)
