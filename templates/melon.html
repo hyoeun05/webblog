@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 멜론 차트</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="main-container">
+        <header>
+            <h1>🎵 실시간 멜론 차트</h1>
+        </header>
+
+        <div class="melon-controls">
+            <p class="sub-text">현재 실시간 TOP 10</p>
+            <button id="btn-refresh-melon" class="refresh-btn">새로고침</button>
+        </div>
+
+        <!-- 멜론 차트 리스트가 들어갈 곳 -->
+        <div id="melon-container" class="melon-list">
+            <!-- 자바스크립트로 데이터가 채워집니다 -->
+        </div>
+
+    </div>
+
+    <!-- 로딩 스피너 -->
+    <div id="loading-spinner" class="spinner-container" style="display: none;">
+        <div class="spinner"></div>
+        <p>차트 정보를 가져오는 중입니다...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

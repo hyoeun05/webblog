@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멜론 차트 가수 검색</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>🎤 멜론 차트 가수 검색</h1></header>
+        
+        <form id="melon-search-form">
+            <input type="text" id="melon-search-input" placeholder="가수 이름을 입력하세요" required>
+            <button type="submit" id="melon-search-button">검색</button>
+        </form>
+
+        <div id="melon-search-result" class="melon-list"></div>
+
+        <div class="back-link-container">
+            <a href="/mainpage" class="back-link">🏠 메인 메뉴로 돌아가기</a>
+        </div>
+    </div>
+    <div id="loading-spinner" class="spinner-container" style="display: none;"><div class="spinner"></div></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

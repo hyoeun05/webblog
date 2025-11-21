@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 멜론 차트</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>🎵 실시간 멜론 차트 (Top 100)</h1></header>
+        <div class="melon-controls">
+            <button id="btn-refresh-melon" class="refresh-btn">새로고침</button>
+        </div>
+        <div id="melon-chart-container" class="melon-list"></div>
+        <div class="back-link-container">
+            <a href="/mainpage" class="back-link">🏠 메인 메뉴로 돌아가기</a>
+        </div>
+    </div>
+    <div id="loading-spinner" class="spinner-container" style="display: none;"><div class="spinner"></div></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

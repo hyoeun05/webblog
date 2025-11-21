@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멜론 차트 점령 가수</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>📊 멜론 차트 점령 가수</h1></header>
+        <p style="text-align:center; color:#666; margin-bottom:20px;">Top 100 차트에 곡이 많은 가수 순위입니다.</p>
+        
+        <div id="melon-ranking-container"></div>
+
+        <div class="back-link-container">
+            <a href="/mainpage" class="back-link">🏠 메인 메뉴로 돌아가기</a>
+        </div>
+    </div>
+    <div id="loading-spinner" class="spinner-container" style="display: none;"><div class="spinner"></div></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

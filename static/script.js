@@ -1,96 +1,150 @@
-// DOM이 모두 로드된 후 스크립트 실행
 document.addEventListener('DOMContentLoaded', () => {
-
-    const searchForm = document.getElementById('search-form');
-    const searchInput = document.getElementById('search-input');
-    const resultsContainer = document.getElementById('results-container');
     const loadingSpinner = document.getElementById('loading-spinner');
 
-    // 폼 제출(검색 버튼 클릭 또는 Enter) 이벤트 리스너
-    searchForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // 폼의 기본 동작(페이지 새로고침) 방지
+    // ==========================================
+    // 1. 맛집 블로그 검색
+    // ==========================================
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        const searchInput = document.getElementById('search-input');
+        const resultsContainer = document.getElementById('results-container');
 
-        const query = searchInput.value.trim(); // 입력된 검색어
+        searchForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const query = searchInput.value.trim();
+            if (!query) return;
 
-        if (query === "") {
-            // alert 대신 HTML 메시지 사용
-            resultsContainer.innerHTML = '<p style="color: red; text-align: center;">검색어를 입력하세요.</p>';
-            return;
-        }
+            resultsContainer.innerHTML = '';
+            loadingSpinner.style.display = 'block';
 
-        // 결과 영역 초기화 및 로딩 스피너 표시
-        resultsContainer.innerHTML = '';
-        loadingSpinner.style.display = 'block'; // 스피너 보이기
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                const data = await response.json();
+                loadingSpinner.style.display = 'none';
+                
+                if (data.items) {
+                    data.items.forEach(item => {
+                        resultsContainer.innerHTML += `
+                            <div class="result-item">
+                                <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                                <p>${item.description}</p>
+                                <div class="meta">${item.bloggername} | ${item.postdate}</div>
+                            </div>`;
+                    });
+                } else {
+                    resultsContainer.innerHTML = '<p class="no-result">결과가 없습니다.</p>';
+                }
+            } catch (error) {
+                loadingSpinner.style.display = 'none';
+                resultsContainer.innerHTML = '<p class="error">오류 발생</p>';
+            }
+        });
+    }
 
-        try {
-            // app.py의 @app.route('/search', methods=['POST'])로 요청
-            const response = await fetch('/search', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query: query }), // 검색어를 JSON 형태로 전송
+    // ==========================================
+    // 3. 멜론 실시간 차트 보기 (Top 100)
+    // ==========================================
+    const melonChartContainer = document.getElementById('melon-chart-container');
+    if (melonChartContainer) {
+        loadMelonData(data => renderMelonList(data, melonChartContainer));
+        document.getElementById('btn-refresh-melon').addEventListener('click', () => {
+            loadMelonData(data => renderMelonList(data, melonChartContainer));
+        });
+    }
+
+    // ==========================================
+    // 4. 멜론 차트 가수 검색
+    // ==========================================
+    const melonSearchForm = document.getElementById('melon-search-form');
+    if (melonSearchForm) {
+        const input = document.getElementById('melon-search-input');
+        const resultDiv = document.getElementById('melon-search-result');
+
+        melonSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const keyword = input.value.trim();
+            if (!keyword) return;
+
+            loadMelonData(data => {
+                // 가수 이름에 키워드가 포함된 곡만 필터링
+                const filtered = data.filter(song => song.artist.includes(keyword));
+                resultDiv.innerHTML = '';
+                if (filtered.length > 0) {
+                    renderMelonList(filtered, resultDiv);
+                } else {
+                    resultDiv.innerHTML = `<p class="no-result">'${keyword}' 가수의 곡이 Top 100에 없습니다.</p>`;
+                }
+            });
+        });
+    }
+
+    // ==========================================
+    // 5. 멜론 차트 점령 가수 랭킹
+    // ==========================================
+    const melonRankingContainer = document.getElementById('melon-ranking-container');
+    if (melonRankingContainer) {
+        loadMelonData(data => {
+            // 가수별 곡 수 카운트
+            const artistCounts = {};
+            data.forEach(song => {
+                artistCounts[song.artist] = (artistCounts[song.artist] || 0) + 1;
             });
 
-            // 로딩 스피너 숨기기
-            loadingSpinner.style.display = 'none';
+            // 배열로 변환 및 정렬 (곡 수 내림차순)
+            const sortedArtists = Object.entries(artistCounts)
+                .sort((a, b) => b[1] - a[1]);
 
-            if (!response.ok) {
-                // 서버에서 4xx, 5xx 오류 반환 시
-                const errorData = await response.json();
-                throw new Error(errorData.message || errorData.error || `HTTP 오류! 상태: ${response.status}`);
-            }
+            melonRankingContainer.innerHTML = '<ol class="rank-list" style="padding-left:20px;"></ol>';
+            const list = melonRankingContainer.querySelector('ol');
 
-            // 성공적으로 데이터를 받으면 JSON으로 파싱
+            sortedArtists.forEach(([artist, count], index) => {
+                // 10위까지만 표시 (혹은 원하면 전체 표시 가능)
+                if (index < 20) {
+                    list.innerHTML += `
+                        <li style="padding:15px 0; border-bottom:1px solid #f5f5f5; font-size:18px; display:flex; justify-content:space-between;">
+                            <span>
+                                <strong style="color:#03C75A; margin-right:10px;">${index + 1}위</strong>
+                                ${artist}
+                            </span>
+                            <span style="font-weight:bold; color:#555;">${count}곡</span>
+                        </li>`;
+                }
+            });
+        });
+    }
+
+    // --- [공통 함수] 멜론 데이터 가져오기 ---
+    async function loadMelonData(callback) {
+        loadingSpinner.style.display = 'block';
+        try {
+            const response = await fetch('/melon');
             const data = await response.json();
-            
-            // 검색 결과 표시 함수 호출
-            displayResults(data.items);
-
-        } catch (error) {
-            // fetch 실패 또는 response.ok가 아닐 때
-            console.error('검색 중 오류 발생:', error);
             loadingSpinner.style.display = 'none';
-            resultsContainer.innerHTML = `<p style="color: red; text-align: center;">검색 중 오류가 발생했습니다: ${error.message}</p>`;
+            if (data.items) callback(data.items);
+            else alert('데이터를 불러오지 못했습니다.');
+        } catch (e) {
+            loadingSpinner.style.display = 'none';
+            alert('오류 발생');
         }
-    });
+    }
 
-    /**
-     * 검색 결과를 받아 HTML 리스트로 만들어주는 함수
-     * @param {Array} items - 네이버 API로부터 받은 블로그 아이템 배열
-     */
-    function displayResults(items) {
-        if (!items || items.length === 0) {
-            resultsContainer.innerHTML = '<p style="text-align: center;">검색 결과가 없습니다.</p>';
-            return;
-        }
-
-        // 결과가 있으니 컨테이너 초기화
-        resultsContainer.innerHTML = '';
-
-        // 각 아이템을 순회하며 HTML 요소 생성
-        items.forEach(item => {
-            const itemElement = document.createElement('div');
-            itemElement.classList.add('result-item');
-            
-            // 날짜 포맷팅 (YYYYMMDD -> YYYY.MM.DD)
-            const postDate = item.postdate.replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3');
-
-            // 네이버 API는 <b> 태그를 포함하므로 innerHTML 사용
-            itemElement.innerHTML = `
-                <h3>
-                    <a href="${item.link}" target="_blank" rel="noopener noreferrer">
-                        ${item.title}
-                    </a>
-                </h3>
-                <p>${item.description}</p>
-                <div class="meta">
-                    <span>블로거: <strong>${item.bloggername}</strong></span> |
-                    <span>작성일: ${postDate}</span>
-                </div>
-            `;
-            
-            resultsContainer.appendChild(itemElement);
+    // --- [공통 함수] 멜론 리스트 그리기 ---
+    function renderMelonList(items, container) {
+        container.innerHTML = '';
+        items.forEach(song => {
+            container.innerHTML += `
+                <div class="melon-item">
+                    <div class="melon-rank">${song.rank}</div>
+                    <img src="${song.image}" class="melon-img">
+                    <div class="melon-info">
+                        <div class="melon-title">${song.title}</div>
+                        <div class="melon-artist">${song.artist}</div>
+                    </div>
+                </div>`;
         });
     }
 });

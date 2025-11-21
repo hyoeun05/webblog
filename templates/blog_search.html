@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맛집 블로그 검색</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <header><h1>맛집 블로그 검색</h1></header>
+        
+        <form id="search-form">
+            <input type="text" id="search-input" placeholder="지역이나 메뉴를 입력하세요" required>
+            <button type="submit" id="search-button">검색</button>
+        </form>
+
+        <div id="results-container"></div>
+        
+        <div class="back-link-container">
+            <a href="/mainpage" class="back-link">🏠 메인 메뉴로 돌아가기</a>
+        </div>
+    </div>
+    <!-- 로딩 스피너 -->
+    <div id="loading-spinner" class="spinner-container" style="display: none;"><div class="spinner"></div></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
